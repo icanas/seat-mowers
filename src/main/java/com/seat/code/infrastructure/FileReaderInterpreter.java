@@ -8,13 +8,22 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
+/**
+ * This class interprets a file containing information about mowers and their instructions.
+ */
 public class FileReaderInterpreter {
-    private String tableuSize;
+
+    private final String tableuSize;
     @Getter
     private List<MowersInfo> mowersInfo = new ArrayList<>();
 
+    /**
+     * Constructs a FileReaderInterpreter by reading mower information and instructions from an input stream.
+     *
+     * @param inputStream The input stream containing the file data.
+     * @throws RuntimeException If an error occurs while reading or parsing the file.
+     */
     public FileReaderInterpreter(InputStream inputStream) {
         try (Scanner scanner = new Scanner(inputStream)) {
             this.tableuSize = scanner.nextLine();
@@ -26,28 +35,27 @@ public class FileReaderInterpreter {
                                 .build()
                 );
             }
-        } catch (InputMismatchException e){
+        } catch (InputMismatchException e) {
             throw new RuntimeException("Error reading file");
         }
     }
 
+    /**
+     * Gets the table size from the file.
+     *
+     * @return The table size as a string.
+     */
     public String getTableuSize() {
         return tableuSize;
     }
 
-    public List<String> getMowersInitialPositions() {
-        return mowersInfo.stream().map(MowersInfo::getMowersInitialPosition).collect(Collectors.toList());
-    }
-
-    public List<String> getRawInstructions() {
-        return mowersInfo.stream().map(MowersInfo::getRawInstructions).collect(Collectors.toList());
-    }
-
+    /**
+     * Builder class for creating MowersInfo instances.
+     */
     @Builder
     @Getter
     public static class MowersInfo {
         private String mowersInitialPosition;
         private String rawInstructions;
     }
-
 }

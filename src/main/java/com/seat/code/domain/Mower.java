@@ -6,7 +6,11 @@ import lombok.Getter;
 
 import java.awt.*;
 
+/**
+ * This class represents a mower that can be placed and moved on a plateau.
+ */
 public class Mower {
+
     @Getter
     private final Integer id;
     private final Point position;
@@ -15,7 +19,7 @@ public class Mower {
     private boolean mowerStuck = false;
     private boolean preparingToMove = false;
 
-    private final String TEXT_SEPARATOR = " "; // Can be moved into constants class
+    private static final String TEXT_SEPARATOR = " ";
 
     public Mower(Integer id, Point position, Compass compass, Instructions instructions) {
         this.id = id;
@@ -25,27 +29,31 @@ public class Mower {
     }
 
     public void executeNextInstruction() {
-        executeOperation(instructions.extractOperation());
-        if (Operation.M.equals(instructions.peakNextOperation())) {
-            preparingToMove = true;
-        } else {
-            preparingToMove = false;
-        }
+        Operation currentOperation = instructions.extractOperation();
+        executeOperation(currentOperation);
+        preparingToMove = Operation.M.equals(instructions.peakNextOperation());
     }
 
     public void executeAllInstructions() {
         while (instructions.operationsAvailable()) {
-            executeOperation(instructions.extractOperation());
+            Operation currentOperation = instructions.extractOperation();
+            executeOperation(currentOperation);
         }
     }
 
     public void executeOperation(Operation operation) {
         switch (operation) {
-            case M -> move();
-            case L -> rotateLeft();
-            case R -> rotateRight();
-            default -> {
-            }
+            case M:
+                move();
+                break;
+            case L:
+                rotateLeft();
+                break;
+            case R:
+                rotateRight();
+                break;
+            default:
+                break;
         }
     }
 
@@ -53,39 +61,48 @@ public class Mower {
      * Calculate next position assuming operation is to move forward
      * This can be used to control outOfBounds
      *
-     * @return
+     * @return The calculated next position.
      */
     public Point calculateNextPosition() {
         Point calculatedPoint = new Point(position);
         CardinalPosition heading = compass.getHeading();
         switch (heading) {
-            case N -> calculatedPoint.translate(0, 1);
-            case S -> calculatedPoint.translate(0, -1);
-            case E -> calculatedPoint.translate(1, 0);
-            case W -> calculatedPoint.translate(-1, 0);
-            default -> calculatedPoint.translate(0, 0);
+            case N:
+                calculatedPoint.translate(0, 1);
+                break;
+            case S:
+                calculatedPoint.translate(0, -1);
+                break;
+            case E:
+                calculatedPoint.translate(1, 0);
+                break;
+            case W:
+                calculatedPoint.translate(-1, 0);
+                break;
+            default:
+                break;
         }
         return calculatedPoint;
     }
 
     public boolean isStuck() {
-        return this.mowerStuck;
+        return mowerStuck;
     }
 
     public void emergencyStop() {
-        this.mowerStuck = true;
+        mowerStuck = true;
     }
 
     public CardinalPosition getHeading() {
-        return this.compass.getHeading();
+        return compass.getHeading();
     }
 
     public Point getActualPosition() {
-        return this.position;
+        return position;
     }
 
     public boolean isPreparingToMove() {
-        return this.preparingToMove;
+        return preparingToMove;
     }
 
     public void printActualPositionStatus() {
@@ -104,7 +121,7 @@ public class Mower {
 
     private void move() {
         Point calculatedPosition = calculateNextPosition();
-        position.move(calculatedPosition.x, calculatedPosition.y);
+        position.setLocation(calculatedPosition);
     }
 
     public boolean operationsAvailable() {
@@ -118,5 +135,4 @@ public class Mower {
     private void rotateRight() {
         compass.rotateRight();
     }
-
 }

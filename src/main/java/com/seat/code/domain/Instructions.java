@@ -4,43 +4,49 @@ import com.seat.code.domain.enums.Operation;
 
 import java.util.Stack;
 
-
+/**
+ * This class represents a stack of instructions for a mower.
+ */
 public class Instructions {
+
     private final Stack<Operation> operationStack;
     private final Stack<Operation> operationExecutedStack;
-    private int stackPointer;
 
     public Instructions(Stack<Operation> operationStack) {
         this.operationStack = operationStack;
         this.operationExecutedStack = new Stack<>();
-        this.stackPointer = operationStack.size() - 1;
     }
 
     /**
-     * Extract next available instruction
-     * Decreases stackPointer *not used for now
-     * @return next available operation
+     * Extracts the next available instruction.
+     * Decreases the stackPointer.
+     *
+     * @return The next available operation.
      */
     public Operation extractOperation() {
         Operation operation = operationStack.pop();
         operationExecutedStack.push(operation);
-        stackPointer--;
         return operation;
     }
 
     /**
-     * True if there is some operation inside Stack
-     * @return
+     * Checks if there are any operations available in the stack.
+     *
+     * @return True if there are operations available, false otherwise.
      */
     public boolean operationsAvailable() {
         return !operationStack.isEmpty();
     }
 
+    /**
+     * Peeks at the next operation in the stack.
+     *
+     * @return The next operation or null if the stack is empty.
+     */
     public Operation peakNextOperation() {
-        if (operationStack.isEmpty()){
+        if (operationStack.isEmpty()) {
             return null;
         }
         return operationStack.peek();
     }
-
 }

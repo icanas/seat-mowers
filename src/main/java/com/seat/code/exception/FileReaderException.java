@@ -1,7 +1,7 @@
 package com.seat.code.exception;
 
 /**
- * Not used Exception
+ * Not used Exception Only for educational purposes
  */
 public class FileReaderException extends Exception {
 

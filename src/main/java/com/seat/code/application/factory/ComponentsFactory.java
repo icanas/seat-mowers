@@ -16,13 +16,20 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Class used to generate Plateau, Mowers , Compass and Instruction set from FileReaderInterpreter
+ * Class used to generate Plateau, Mowers, Compass, and Instruction set from FileReaderInterpreter.
  */
 public class ComponentsFactory {
 
     private final String SEPARATOR = " ";
     private final String WRONG_CONVERSION_EXCEPTION = " Can not convert string into integer";
 
+    /**
+     * Parses the plateau information from the input file interpreter.
+     *
+     * @param inputFileInterpreter The input file interpreter.
+     * @return The generated Plateau object.
+     * @throws IllegalArgumentException If the tableau size is not valid.
+     */
     public Plateau parsePlateau(FileReaderInterpreter inputFileInterpreter) {
         String[] splittedRawInfo = split(inputFileInterpreter.getTableuSize());
         if (splittedRawInfo.length != 2) {
@@ -37,14 +44,19 @@ public class ComponentsFactory {
         }
     }
 
+    /**
+     * Parses the list of mowers from the input file interpreter.
+     *
+     * @param inputFileInterpreter The input file interpreter.
+     * @return The list of generated Mower objects.
+     * @throws IllegalArgumentException If parsing the mower information fails.
+     */
     public List<Mower> parseMowers(FileReaderInterpreter inputFileInterpreter) {
         List<Mower> mowersList = new ArrayList<>();
         AtomicInteger id = new AtomicInteger();
-        inputFileInterpreter.getMowersInfo().forEach(
-                mi -> {
-                    mowersList.add(parseMower(id.getAndIncrement(), mi.getMowersInitialPosition(), mi.getRawInstructions()));
-                }
-        );
+        inputFileInterpreter.getMowersInfo().forEach(mi -> {
+            mowersList.add(parseMower(id.getAndIncrement(), mi.getMowersInitialPosition(), mi.getRawInstructions()));
+        });
         return mowersList;
     }
 
@@ -77,41 +89,37 @@ public class ComponentsFactory {
     }
 
     /**
-     * Checks Valid Cardinal Position
+     * Gets a valid cardinal position based on the input string.
      *
-     * @param strOp
-     * @return
+     * @param strOp The input string representing the cardinal position.
+     * @return The corresponding CardinalPosition enum value.
+     * @throws RuntimeException If the input cardinal point is not recognized.
      */
     private CardinalPosition getCardinalPosition(String strOp) {
-
         if (strOp == null) {
             throw new RuntimeException("Operation parsed is null");
         }
-        List<CardinalPosition> cardinals = Arrays.asList(CardinalPosition.values());
-        if (cardinals.stream().anyMatch(c -> c.equals(CardinalPosition.valueOf(strOp)))) {
+        try {
             return CardinalPosition.valueOf(strOp);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Cardinal point " + strOp + " not recognized");
         }
-        throw new RuntimeException("Cardinal point" + strOp + "not recognised");
     }
 
     /**
-     * Checks Integer conversion
+     * Converts a string to an integer, checking for valid conversion.
      *
-     * @param strNum
-     * @return
-     * @throws NumberFormatException
+     * @param strNum The input string to convert.
+     * @return The converted integer.
+     * @throws NumberFormatException If the string cannot be converted to a non-negative integer.
      */
     private int getInteger(String strNum) throws NumberFormatException {
         try {
-            if (strNum == null) {
-                throw new NumberFormatException();
-            }
             int i = Integer.parseInt(strNum);
-            if (i < 0) throw new NumberFormatException("Value can not be negative");
+            if (i < 0) throw new NumberFormatException("Value cannot be negative");
             return i;
         } catch (NumberFormatException e) {
             throw new NumberFormatException(e.getMessage() + WRONG_CONVERSION_EXCEPTION);
         }
     }
-
 }
